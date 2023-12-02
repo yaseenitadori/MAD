@@ -1,0 +1,227 @@
+CODE
+#Data class kotlin k andar select krlo data class project sy ban gi
+
+package pk.edu.iqra.android.firstapp.models
+
+data class Contact(val id:String, val name:String,val mobileNumber:String)
+
+
+#Adapter in kotlin class projct sy bny gi
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import pk.edu.iqra.android.firstapp.R
+import pk.edu.iqra.android.firstapp.models.Contact
+
+class ContactAdapter(var data:List<Contact>) : RecyclerView.Adapter<ContactAdapter.ContactVH>() {
+
+
+    class ContactVH(item: View):RecyclerView.ViewHolder(item){
+        val txName = item.findViewById<TextView>(R.id.tx_name)
+        val txMobileNumber = item.findViewById<TextView>(R.id.tx_mobile_number)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactVH {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_user,parent,false)
+        return ContactVH(view)
+    }
+
+    override fun getItemCount(): Int {
+        return data.size
+    }
+
+    override fun onBindViewHolder(holder: ContactVH, position: Int) {
+        val contact = data[position]
+
+        holder.txName.text = contact.name
+        holder.txMobileNumber.text = contact.mobileNumber
+    }
+
+#Home Activity create kotlin 
+
+private lateinit var rvMessageList:RecyclerView
+    private lateinit var contactAdapter: ContactAdapter
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //setTheme(R.style.AppTheme_PremiumCustomer)
+        setContentView(R.layout.activity_home)
+
+        val txName = findViewById<TextView>(R.id.txName)
+        //val name = intent.extras?.getString("name")
+        //val kUser = intent.extras?.getSerializable("user") as KUser
+        //val bUser = intent.extras?.getParcelable<BUser>("user")
+        val bUser = DataHolder.bUser
+
+        txName.text = "Hi, ${bUser?.fatherName}"
+
+        rvMessageList = findViewById(R.id.rvMessageList)
+        contactAdapter = ContactAdapter(getContacts())
+
+        rvMessageList.adapter = contactAdapter
+    }
+
+    private fun getContacts():List<Contact>{
+        val list = ArrayList<Contact>()
+
+        list.add(Contact("1","Mr. John 1","+92-344-2992002"))
+        list.add(Contact("2","Mr. John 2","+92-344-2992002"))
+        list.add(Contact("3","Mr. John 3","+92-344-2992002"))
+        list.add(Contact("4","Mr. John 4","+92-344-2992002"))
+        list.add(Contact("5","Mr. John 5","+92-344-2992002"))
+        list.add(Contact("6","Mr. John 6","+92-344-2992002"))
+        list.add(Contact("7","Mr. John 7","+92-344-2992002"))
+        list.add(Contact("8","Mr. John 8","+92-344-2992002"))
+        list.add(Contact("9","Mr. John 9","+92-344-2992002"))
+        list.add(Contact("10","Mr. John 10","+92-344-2992002"))
+
+        return list
+    }
+}
+
+
+#item_List xml file ye sample code jo list k item show kry gi uska UI hy (laylout)
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:layout_margin="10dp"
+    android:background="@drawable/bg_login_container"
+    android:weightSum="4">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="5dp">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_user_profile"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tx_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Muhammad Islam"
+            android:textStyle="bold"
+            android:textSize="18dp"/>
+
+        <TextView
+            android:id="@+id/tx_mobile_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="+92-344-5584939"
+            android:textColor="@color/black"/>
+    </LinearLayout>
+</LinearLayout>
+
+#Home Activity xml create XML file on layouts 
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".HomeActivity">
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="4"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:background="@color/white"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/txName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tx_dashbaord"
+            android:textColor="?attr/app_heading_color"
+            android:textSize="@dimen/heading_text_size" />
+
+    </LinearLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMessageList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/header"
+        android:layout_above="@id/footer"
+        android:layout_marginVertical="5dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"/>
+
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="4"
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            style="@style/bottomImageContainerStyle">
+
+            <ImageView
+                android:layout_width="@dimen/footer_icon_width"
+                android:layout_height="@dimen/footer_icon_height"
+                android:src="@drawable/ic_home"
+                app:tint="?attr/app_footer_icon_color"/>
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/bottomImageContainerStyle">
+
+            <ImageView
+                android:layout_width="@dimen/footer_icon_width"
+                android:layout_height="@dimen/footer_icon_height"
+                android:src="@drawable/ic_search"
+                app:tint="?attr/app_footer_icon_color" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/bottomImageContainerStyle">
+
+            <ImageView
+                android:layout_width="@dimen/footer_icon_width"
+                android:layout_height="@dimen/footer_icon_height"
+                android:src="@drawable/ic_profile"
+                app:tint="?attr/app_footer_icon_color"/>
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/bottomImageContainerStyle">
+
+            <ImageView
+                android:layout_width="@dimen/footer_icon_width"
+                android:layout_height="@dimen/footer_icon_height"
+                android:src="@drawable/ic_logout"
+                app:tint="?attr/app_footer_icon_color"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+</RelativeLayout>
