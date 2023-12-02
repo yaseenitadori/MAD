@@ -1,0 +1,248 @@
+
+#Main activity/login screen activity Kotli
+
+    private lateinit var edEmail:EditText
+    private lateinit var edPassword:EditText
+    private lateinit var btnSignIn:Button
+    private lateinit var btnSignUp:Button
+    private lateinit var prefManager: PrefManager
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
+
+        edEmail = findViewById(R.id.ed_email)
+        edPassword = findViewById(R.id.ed_password)
+        btnSignIn = findViewById(R.id.btn_sign_in)
+        btnSignUp = findViewById(R.id.btn_sign_up)
+
+        btnSignIn.setOnClickListener(this)
+        btnSignUp.setOnClickListener(this)
+
+        prefManager = PrefManager(this)
+
+        /*if(prefManager.containData("id")){
+            val id = prefManager.getData("id").toInt()
+            val firstName = prefManager.getData("firstName")
+            val lastName = prefManager.getData("lastName")
+            val fatherName = prefManager.getData("fatherName")
+            val cnic = prefManager.getData("cnic")
+            val dob = prefManager.getData("dob")
+
+            val bUser = BUser(id,firstName,lastName,fatherName,cnic,dob)
+            goToHomeActivity(bUser)
+        }*/
+
+        if(prefManager.containData("user")){
+            val gson = Gson()
+            val userObjStr = prefManager.getData("user")
+            val bUser = gson.fromJson(userObjStr, BUser::class.java)
+            goToHomeActivity(bUser)
+        }
+        /*findViewById<Button>(R.id.btn_sign_in).setOnClickListener {
+            //val kUser = KUser(1,"Muhammad","Wasim","Aziz","421873823293","10102010")
+            val bUser = BUser(1,"Muhammad","Wasim","Aziz","421873823293","10102010")
+            DataHolder.bUser = bUser
+            Intent(this@LoginActivity,HomeActivity::class.java).apply {
+                //putExtra("name","Muhammad Wasim")
+                //putExtra("user",bUser)
+                startActivity(this)
+            }
+        }*/
+    }
+
+    override fun onClick(p0: View?) {
+        when(p0?.id){
+            R.id.btn_sign_in-> {
+                doSignIn()
+            }
+            R.id.btn_sign_up-> {
+
+            }
+        }
+    }
+
+    private fun doSignIn(){
+        val email = edEmail.getUIText()
+        val edPassword = edPassword.getUIText()
+
+        if(email.isNotEmpty() && edPassword.isNotEmpty()){
+            val emailRegex = Regex("^[\\w!#\$%&amp;'*+/=?`{|}~^-]+(?:\\.[\\w!#\$%&amp;'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}\$")
+            if(emailRegex.matches(email)){
+                val bUser = BUser(1,"Muhammad","Wasim","Aziz","421873823293","10102010")
+
+                /*prefManager.saveData("id",bUser.id.toString())
+                prefManager.saveData("firstName",bUser.firstName)
+                prefManager.saveData("lastName",bUser.lastName)
+                prefManager.saveData("fatherName",bUser.fatherName)
+                prefManager.saveData("cnic",bUser.cnic)
+                prefManager.saveData("dob",bUser.dob)*/
+
+                val gson = Gson()
+                val userObjStr = gson.toJson(bUser)
+                prefManager.saveData("user", userObjStr)
+
+                goToHomeActivity(bUser)
+            }
+            else{
+                Toast.makeText(this,"please enter correct email address",Toast.LENGTH_SHORT).show()
+            }
+        }
+        else{
+            Toast.makeText(this,"please enter credentials",Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun goToHomeActivity(bUser:BUser){
+        DataHolder.bUser = bUser
+        Intent(this@LoginActivity,HomeActivity::class.java).apply {
+            startActivity(this)
+        }
+    }
+
+
+
+#Buser (Kotlin data class)
+
+
+package pk.edu.iqra.android.firstapp.models
+
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+
+data class BUser(
+    val id:Int,
+    val firstName:String,
+    val lastName:String,
+    val fatherName:String,
+    val cnic:String,
+    val dob:String
+):Parcelable
+
+
+
+#XML OF LOGIN Screen Ui
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        android:padding="20dp"
+        android:background="@drawable/bg_login_container">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginVertical="5dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Email Address"/>
+
+            <EditText
+                android:id="@+id/ed_email"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:inputType="textEmailAddress"
+                android:hint="Enter email address"
+                android:paddingStart="3dp"
+                android:text="abc@gmail.com"
+                android:background="@drawable/bg_input_box"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginVertical="5dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Password"/>
+
+            <EditText
+                android:id="@+id/ed_password"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:inputType="textPassword"
+                android:text="123456"
+                android:hint="Enter password"
+                android:paddingStart="3dp"
+                android:background="@drawable/bg_input_box"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginVertical="5dp">
+
+            <Button
+                android:id="@+id/btn_sign_up"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sign Up"
+                android:layout_marginEnd="5dp"/>
+
+            <Button
+                android:id="@+id/btn_sign_in"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sign In"
+                android:layout_marginStart="5dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
+
+
+
+#PrefMANAGER Class Kotlin
+
+\
+
+package pk.edu.iqra.android.firstapp.utils
+
+import android.content.Context
+import android.content.SharedPreferences
+
+class PrefManager(context:Context) {
+    private var preferences: SharedPreferences
+
+    init {
+        preferences = context.getSharedPreferences("app_pref",Context.MODE_PRIVATE)
+    }
+
+    fun getData(key:String):String{
+        return preferences.getString(key,"")?:""
+    }
+
+    fun saveData(key:String, value:String){
+        preferences.edit().putString(key,value).apply()
+    }
+
+    fun containData(key:String) = preferences.contains(key)
+
+    fun clearData(){
+        preferences.edit().clear().apply()
+    }
+}
